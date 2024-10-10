@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Pokemon } from 'src/pokemon/entities/pokemon.entity';
-import axios, { AxiosInstance } from 'axios';
-import * as https from 'https';
+import { AxiosAdapter } from 'src/common/http-adapters/axios.adapter';
 import { CreatePokemonDto } from 'src/pokemon/dto';
 import { PokemonService } from 'src/pokemon/pokemon.service';
 import { PokeResponse } from './interfaces/poke-response.interface';
@@ -14,20 +13,14 @@ export class SeedService {
     @InjectModel(Pokemon.name)
     private readonly pokemonModel: Model<Pokemon>,
     private readonly pokemonService: PokemonService,
+    private readonly httpAdapter: AxiosAdapter,
   ) {}
-
-  private readonly axios: AxiosInstance = axios;
 
   async executeSeed(limit: number, offset: number, deleteOld: boolean) {
     try {
-      const agent = new https.Agent({
-        rejectUnauthorized: false,
-      });
+      const url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`;
 
-      const { data } = await this.axios.get<PokeResponse>(
-        `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`,
-        { httpsAgent: agent },
-      );
+      const data: PokeResponse = await this.httpAdapter.get(url);
 
       const formatedData: CreatePokemonDto[] = data.results.map(
         ({ name, url }) => {

@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { PokemonModule } from './pokemon/pokemon.module';
 import { CommonModule } from './common/common.module';
+import { SeedModule } from './seed/seed.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -13,7 +14,7 @@ import { CommonModule } from './common/common.module';
 
     MongooseModule.forRoot('mongodb://localhost:27018/nest-pokemon'), // crea la conexión a bbdd
 
-    PokemonModule, CommonModule,
+    PokemonModule, CommonModule, SeedModule,
   ],
 })
 export class AppModule {}

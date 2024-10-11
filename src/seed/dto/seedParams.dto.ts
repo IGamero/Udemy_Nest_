@@ -1,20 +1,23 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsInt, Min, IsBoolean, IsPositive } from 'class-validator';
+import { IsOptional, IsInt, Min, IsBoolean, IsNumber } from 'class-validator';
 
 export class SeedParamsDto {
   @IsOptional()
-  @IsPositive()
-  @Type(() => Number)
+  @IsNumber()
+  // @Type(() => Number)
   @Min(10, { message: 'limit must not be less than 10' })
-  limit: number = 10;
+  @IsInt()
+  limit?: number = 10;
 
   @IsOptional()
-  @IsPositive()
-  @Type(() => Number)
+  @IsNumber()
+  // @Type(() => Number)
+  @Min(0, { message: 'limit must not be less than 10' })
   @IsInt()
-  offset: number = 0;
+  offset?: number = 0;
 
-  @Type(() => Boolean)
+  @IsOptional()
+  // @Type(() => Boolean)
   @IsBoolean()
-  deleteOld: boolean = false;
+  deleteOld?: boolean = false;
 }

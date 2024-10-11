@@ -6,6 +6,8 @@ import { AxiosAdapter } from 'src/common/http-adapters/axios.adapter';
 import { CreatePokemonDto } from 'src/pokemon/dto';
 import { PokemonService } from 'src/pokemon/pokemon.service';
 import { PokeResponse } from './interfaces/poke-response.interface';
+import { SeedParamsDto } from './dto/seedParams.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class SeedService {
@@ -16,7 +18,9 @@ export class SeedService {
     private readonly httpAdapter: AxiosAdapter,
   ) {}
 
-  async executeSeed(limit: number, offset: number, deleteOld: boolean) {
+  async executeSeed(queryParams: SeedParamsDto) {
+    const { limit, offset, deleteOld } = queryParams;
+    const paginationDto: PaginationDto = { limit, offset };
     try {
       const url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`;
 
@@ -37,7 +41,7 @@ export class SeedService {
       // Podemos optar por BORRAR todo lo que ya tenemos
       if (deleteOld) await this.pokemonModel.deleteMany(); // Borra todo lo que haya
 
-      const currentPokemons: Pokemon[] = await this.pokemonService.findAll();
+      const currentPokemons: Pokemon[] = await this.pokemonModel.find();
       const pokemonsToInsert: CreatePokemonDto[] = [];
 
       formatedData.forEach((pokemon: CreatePokemonDto) => {

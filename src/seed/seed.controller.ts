@@ -7,7 +7,6 @@ export class SeedController {
 
   @Get()
   executeSeed(@Query() queryParams: SeedParamsDto) {
-    const { limit, offset, deleteOld } = queryParams;
-    return this.seedService.executeSeed(limit, offset, deleteOld);
+    return this.seedService.executeSeed(queryParams);
   }
 }

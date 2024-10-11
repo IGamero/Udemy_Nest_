@@ -11,6 +11,7 @@ import { handleExceptions } from 'src/common/utils/handleExceptions';
 import { CreatePokemonDto, UpdatePokemonDto } from './dto/index';
 import { Pokemon } from './entities/pokemon.entity';
 import { dev_setAll_FieldToValue } from 'src/common/utils/dev/dev-utils';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
@@ -30,9 +31,16 @@ export class PokemonService {
     }
   }
 
-  async findAll() {
+  async findAll(paginationDto?: PaginationDto) {
+    const { limit, offset } = paginationDto;
     try {
-      const allPokemons = await this.pokemonModel.find({ status: true });
+      const allPokemons = await this.pokemonModel
+        .find({ status: true })
+        .limit(limit)
+        .skip(offset)
+        .sort({ no: 1 }) // Ordena la respuesta por orden numerico ascendente
+        .select('-status'); // hace select de todas las columnas excepto 'status'
+      allPokemons;
       return allPokemons;
     } catch (error) {
       console.log(error);

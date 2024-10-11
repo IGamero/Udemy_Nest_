@@ -9,12 +9,14 @@ import {
   HttpCode,
   HttpStatus,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id.pipe';
 import { PokemonService } from './pokemon.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Pokemon } from './entities/pokemon.entity';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('pokemon')
 export class PokemonController {
@@ -36,8 +38,10 @@ export class PokemonController {
   }
 
   @Get()
-  async findAll() {
-    const allPokemons: Pokemon[] = await this.pokemonService.findAll();
+  async findAll(@Query() paginationDto: PaginationDto) {
+    const allPokemons: Pokemon[] =
+      await this.pokemonService.findAll(paginationDto);
+    const { limit, offset } = paginationDto;
     if (allPokemons.length === 0) {
       return {
         statusCode: 200,
@@ -45,10 +49,11 @@ export class PokemonController {
         data: allPokemons,
       };
     }
-
+    const page = offset && limit ? Math.floor(offset / limit) : 1;
     return {
       statusCode: 200,
       message: 'getAllPokemons',
+      page,
       total: allPokemons.length,
       data: allPokemons,
     };

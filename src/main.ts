@@ -7,7 +7,7 @@ dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api/v2'); // añade globalmente a todas las turas lo pasado por parametro
+  app.setGlobalPrefix(process.env.API_PREFIX); // añade globalmente a todas las turas lo pasado por parametro
 
   app.useGlobalPipes(
     new ValidationPipe({

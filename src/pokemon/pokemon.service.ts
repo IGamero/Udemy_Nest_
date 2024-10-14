@@ -1,9 +1,9 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { isValidObjectId, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { isMongoId, isString } from 'class-validator';
@@ -15,10 +15,17 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
+  private selectExclude: string;
   constructor(
     @InjectModel(Pokemon.name) // Inyecta el modelo a partir del nombre
     private readonly pokemonModel: Model<Pokemon>,
-  ) {}
+
+    private readonly configService: ConfigService, // Servicio para cargar la configuracion de .env
+  ) {
+    // console.log(process.env.SELECT_EXCLUDE);
+    // console.log(configService.get<string>('selectExclude')); // lo podemos tipar usando diamantes.No hace transfomracion, unicamente ayuda al tipado
+    this.selectExclude = configService.get<string>('selectExclude');
+  }
   async create(createPokemonDto: CreatePokemonDto) {
     try {
       createPokemonDto.name = createPokemonDto.name.toLowerCase();
@@ -39,7 +46,9 @@ export class PokemonService {
         .limit(limit)
         .skip(offset)
         .sort({ no: 1 }) // Ordena la respuesta por orden numerico ascendente
-        .select('-status'); // hace select de todas las columnas excepto 'status'
+        // .select(process.env.SELECT_EXCLUDE); // hace select de todas las columnas excepto 'status'
+        // .select(this.configService.get<string>('selectExclude')); // hace select de todas las columnas excepto 'status'
+        .select(this.selectExclude);
       allPokemons;
       return allPokemons;
     } catch (error) {

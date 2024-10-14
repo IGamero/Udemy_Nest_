@@ -23,13 +23,16 @@ npm i -g @nest/cli
 docker-compose up -d
 ```
 
-5. Iniciar le proyecto
+5.  Clonar el archivo `.env.template`
+
+6.  Iniciar las variables definidas en `.env`.
+7.  Ejecutar la aplicaion en dev
 
 ```
-yarn start:dev
+yarn: start:dev
 ```
 
-6. Reconstruir la base de datos con la semilla
+8. Reconstruir la base de datos con la semilla
 
 ```
 http://localhost:3000/api/v2/seed

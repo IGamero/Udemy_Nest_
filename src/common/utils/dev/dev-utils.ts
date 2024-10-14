@@ -5,7 +5,7 @@ export const dev_setAll_FieldToValue = async (
   field: string,
   value: any,
 ) => {
-  if (process.env.ENVIROMENT && !process.env.ENVIROMENT.includes('dev')) {
+  if (process.env.NODE_ENV && !process.env.NODE_ENV.includes('dev')) {
     throw new ForbiddenException(
       'This method is only available in development mode',
     );
